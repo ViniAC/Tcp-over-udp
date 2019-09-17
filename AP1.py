@@ -35,4 +35,4 @@ t.start()
 
 while True:
     msg = input('Mensagem que voce deseja enviar:')
-    udp.sendto(msg.encode(), '0.0.0.0')
+    recv.sendto(msg.encode(), '0.0.0.0')
