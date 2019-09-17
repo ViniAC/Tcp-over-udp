@@ -2,14 +2,17 @@ import socket
 import threading
 
 #
-# # detectar ip proprio e determinar porta de conexão:PENDENTE
-def get_Host_Name_Ip():
-    try:
-        host_name = socket.gethostname()
-        host_ip = socket.gethostbyname(host_name)
-        return host_name,host_ip
-    except:
-        print("Unable to get Hostname and IP")
+
+#determinar porta de conexão(disponiveis: 49152 a 65535): PENDENTE
+def find_Open_Ports():
+    for port in range(49152, 65535):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        result = sock.connect_ex((my_Ip, port))
+        if result == 0:
+            sock.close()
+            return port
+        sock.close()
+#
 #   PROGRAMA CONEXAO 1-1
 #
 # socket udp
@@ -17,10 +20,11 @@ def get_Host_Name_Ip():
 #
 
 udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-myHost, myIP = get_Host_Name_Ip()
-print(myHost ,myIP)
-myAddr = (myHost, myIP)
-udp.bind(myAddr)
+my_Host, my_Ip = get_Host_Name_Ip()
+my_Port = find_Open_Ports()
+print(my_Ip)
+connection_Addr = (my_Host, my_Port)
+udp.bind = connection_Addr
 
 def  recv_msg():
     while True:
