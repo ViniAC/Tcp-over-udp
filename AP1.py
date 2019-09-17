@@ -10,7 +10,7 @@ import threading
 def find_Open_Ports():
     for port in range(49152, 65535):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        result = sock.connect_ex((my_Ip, port))
+        result = sock.connect_ex(('127.0.0.1', port))
         if result == 0:
             sock.close()
             return port
@@ -18,14 +18,14 @@ def find_Open_Ports():
 
 # socket udp
 # thread rodando socket pra recebimento de arquivo-->função
-udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 my_Port = find_Open_Ports()
-connection_Addr = ('0.0.0.0', my_Port)
-udp.bind = connection_Addr
+connection_Addr = ('LOCALHOST', my_Port)
+recv.bind = connection_Addr
 
 def  recv_msg():
     while True:
-        msgr, cliente = udp.recvfrom(1024)
+        msgr, cliente = recv.recvfrom(1024)
         if msgr is not None:
             print("Mensagem recebida:", msgr)
             msgr = None
@@ -35,4 +35,4 @@ t.start()
 
 while True:
     msg = input('Mensagem que voce deseja enviar:')
-    udp.sendto(msg.encode(), MyIp)
+    udp.sendto(msg.encode(), '0.0.0.0')
