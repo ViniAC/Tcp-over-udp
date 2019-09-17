@@ -1,6 +1,9 @@
 import socket
 import threading
 
+
+#
+# PROGRAMA CONEXAO 1-1
 #
 
 #determinar porta de conexão(disponiveis: 49152 a 65535): PENDENTE
@@ -12,18 +15,12 @@ def find_Open_Ports():
             sock.close()
             return port
         sock.close()
-#
-#   PROGRAMA CONEXAO 1-1
-#
+
 # socket udp
 # thread rodando socket pra recebimento de arquivo-->função
-#
-
 udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-my_Host, my_Ip = get_Host_Name_Ip()
 my_Port = find_Open_Ports()
-print(my_Ip)
-connection_Addr = (my_Host, my_Port)
+connection_Addr = ('0.0.0.0', my_Port)
 udp.bind = connection_Addr
 
 def  recv_msg():
