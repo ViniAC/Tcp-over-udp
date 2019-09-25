@@ -4,7 +4,8 @@ import sys
 import time
 import pickle
 
-   
+thread_list = []
+
 def get_Host_Name_Ip():
     try:
         host_name = socket.gethostname()
@@ -22,14 +23,14 @@ connection_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 MyIp = (Host, Port)
 connection_socket.bind(MyIp)
 
-def  recv_con():
+def recv_con():
     while True:
         data, client = connection_socket.recvfrom(2048)
         tcpHeader = pickle.loads(data)
         if tcpHeader.syn == True:
             check_recv_connection(tcpHeader, client)
 
-def  check_recv_connection(header, client):
+def check_recv_connection(header, client):
     if header.syn == True:
         if True:
             print('Conexão recebida, enviando confirmação...')
@@ -39,25 +40,38 @@ def  check_recv_connection(header, client):
         code = code + 1
         data_byte = pickle.dumps(connection_object)
         connection_socket.sendto(data_byte, client)
-        thread_new_connection = threading.Thread(target=recv_message)
-        create_thread()
+        thread_new_connection = threading.Thread(target=recv_message, args=connection_object)
 
 #função que vai rodar na thread pra receber mensagem de uma conexão nova
-def recv_message():
+def recv_message(connection_object):
     while True:
         print('')
 
-def create_thread():
+#Main Thread = gerenciador de threads, New Connection Thread = thread para receber novas conexoes
+def manage_thread():
     global thread_list
-    newThread = threading.Thread(target=recv_message, args=len(thread_list))
+    recvThread = False
+    try:
+        if recvThread == False or thread_list[1].name != 'New Connection Thread':
+            thread = threading.Thread(target=recv_con, name='New Connection Thread')
+            thread_list.append(thread)
+            thread.start(thread)
+            recvThread = True
+    except IndexError:
+        thread = threading.Thread(target=recv_con, name='New Connection Thread')
+        thread_list.append(thread)
+        thread.start(thread)
+        
+def start_system():
+    global thread_list
+    newThread = threading.Thread(target=manage_thread)
     thread_list.append(newThread)
-
-
-
-thread_list = []
-thread = threading.Thread(target=recv_con, args='Thread principal')
-thread_list.append(thread)
-thread.start()
+    print('teste')
+    newThread.start()
+    print('teste2')
+start_system()
+#thread = threading.Thread(target=manage_thread, name='Main Thread')
+#thread_list.append(thread)
 
 def create_socket():
     return 0
